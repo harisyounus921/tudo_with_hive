@@ -1,11 +1,12 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import '../box/box.dart';
-import '../models/notes_model.dart';
+import 'package:tudo_with_hive/box/box.dart';
+import 'package:tudo_with_hive/models/notes_model.dart';
+import 'package:tudo_with_hive/screens/detailedScreen/detailScreen.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class HomeScreen2 extends StatefulWidget {
   const HomeScreen2({Key? key}) : super(key: key);
@@ -40,6 +41,8 @@ class _HomeScreen2State extends State<HomeScreen2>{
     });
   }
 
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -61,26 +64,55 @@ class _HomeScreen2State extends State<HomeScreen2>{
                 shrinkWrap: true,
                 itemBuilder: (context, index){
                   return Padding(
-                    //padding: const EdgeInsets.all(15),
                     padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 10),
                     child: ListTile(
                       tileColor: colors[random.nextInt(4)],
 
-                      leading: CircleAvatar(radius: 30,backgroundColor: Colors.white,
-                        backgroundImage: FileImage(File(data[index].image.toString())),
+                      leading: InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                              detailScreen(title: data[index].title.toString(),
+                                description: data[index].description.toString(),
+                                image: data[index].image.toString(),)));
+                        },
+                        child: data[index].image.toString()==null.toString()||data[index].image.toString()==""?
+                        const CircleAvatar(radius: 30,backgroundColor: Colors.white,
+                          backgroundImage: AssetImage("assets/splash.png"),
+                        ): CircleAvatar(radius: 30,backgroundColor: Colors.white,
+                          backgroundImage: FileImage(File(data[index].image.toString())),
+                        ),
                       ),
 
-                      title: Text("     "+data[index].title.toString() ,
-                        style: const TextStyle(fontSize: 20 , fontWeight: FontWeight.w500 , color: Colors.white),),
+                      title: InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                              detailScreen(title: data[index].title.toString(),
+                              description: data[index].description.toString(),
+                              image: data[index].image.toString(),)));
+                        },
+                        child: Text("     "+data[index].title.toString() ,
+                          style: const TextStyle(fontSize: 20 , fontWeight: FontWeight.w500 , color: Colors.white),),
+                      ),
 
-                      subtitle: Text("     "+data[index].description.toString(),
-                        style: const TextStyle(fontSize: 18 , fontWeight: FontWeight.w300, color: Colors.white),),
+                      subtitle: InkWell(
+                        onTap: (){
+                          Navigator.push(context, MaterialPageRoute(builder: (context)=>
+                              detailScreen(title: data[index].title.toString(),
+                                description: data[index].description.toString(),
+                                image: data[index].image.toString(),)));
+                        },
+                        child: Text("        "+data[index].description.toString(),
+                          style: const TextStyle(fontSize: 12 , fontWeight: FontWeight.w300, color: Colors.white),),
+                      ),
 
                       trailing:PopupMenuButton(
                         icon: Icon(Icons.more_vert ,color: Colors.white,),
                         iconSize: 35,
                         onSelected: (value) {
                           if (value==1){
+                            print(data[index].title.toString());
+                            print(data[index].description.toString());
+                            print(data[index].image.toString());
                             _editDialog(data[index], data[index].title.toString(),
                                 data[index].description.toString(), data[index].image.toString());
                           }else if(value==2){
@@ -161,13 +193,20 @@ class _HomeScreen2State extends State<HomeScreen2>{
                     ),
                   ),
                   const SizedBox(height: 20,),
-                  TextButton(onPressed: (){
-                    pickimage();
-                  }, child: const Text('Change Gallery Photo')),
-                  const SizedBox(height: 20,),
-                  TextButton(onPressed: (){
-                    pickcamera();
-                  }, child: const Text('Change Camera Photo')),
+                  InkWell(
+                    onTap: (){
+                      pickimage();
+                    },
+                    child: Container(
+                      height: 55,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.green,
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      child: const Center(child: Text("Change Photo",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w600))),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -185,6 +224,7 @@ class _HomeScreen2State extends State<HomeScreen2>{
                 notesModel.save();
                 descriptionController.clear() ;
                 titleController.clear() ;
+                imagePath=null.toString();
 
                 Navigator.pop(context);
               }, child: const Text('Edit')),
@@ -245,25 +285,38 @@ class _HomeScreen2State extends State<HomeScreen2>{
               children: [
                 ElevatedButton(
                     onPressed: (){
-                      pickimage();
+                      titleController.clear();
+                      descriptionController.clear();
+                      imagePath=null.toString();
+                      Navigator.pop(context);
                     },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.green),
                       padding: MaterialStateProperty.all(const EdgeInsets.all(13)),
-                    ),child: const Icon(Icons.image)),
+                    ),child: const Icon(Icons.close)),
                 GestureDetector(
                   onTap: (){
-                    final data = NotesModel(title: titleController.text,
-                        description: descriptionController.text,
-                        image: imagePath) ;
+                    if(titleController.text.length<1){
+                      Fluttertoast.showToast(msg: "Please write the Title.",textColor: Colors.white,backgroundColor: Colors.green);
+                    }else if(descriptionController.text.length<1) {
+                      Fluttertoast.showToast(msg: "Please write the Description.",textColor: Colors.white,backgroundColor: Colors.green);
+                    }else if(imagePath.toString()==null.toString()) {
+                     Fluttertoast.showToast(msg: "Please Pick an image",textColor: Colors.white,backgroundColor: Colors.green);
+                    }else{
+                      final data = NotesModel(title: titleController.text,
+                          description: descriptionController.text,
+                          image: imagePath) ;
 
-                    final box = Boxes.getData();
-                    box.add(data);
+                      final box = Boxes.getData();
+                      box.add(data);
 
-                    titleController.clear();
-                    descriptionController.clear();
+                      titleController.clear();
+                      descriptionController.clear();
+                      imagePath="";
 
-                    Navigator.pop(context);
+                      Navigator.pop(context);
+                    }
+
                   },
                   child: Container(
                     height: 55,
@@ -277,12 +330,12 @@ class _HomeScreen2State extends State<HomeScreen2>{
                 ),
                 ElevatedButton(
                     onPressed: (){
-                      pickcamera();
+                      pickimage();
                       },
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.green),
                       padding: MaterialStateProperty.all(const EdgeInsets.all(13)),
-                    ),child: const Icon(Icons.camera)),
+                    ),child: const Icon(Icons.image)),
               ],
             ),
             const Divider(
