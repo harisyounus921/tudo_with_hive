@@ -48,6 +48,7 @@ class _HomeScreen2State extends State<HomeScreen2>{
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
+        foregroundColor: Colors.white,
         centerTitle: true,
         backgroundColor: Colors.green,
         title: const Text('Hive Tudo Application'),
@@ -150,6 +151,7 @@ class _HomeScreen2State extends State<HomeScreen2>{
         },
       ),
       floatingActionButton: FloatingActionButton(
+        foregroundColor: Colors.white,
         backgroundColor: Colors.green,
         onPressed: ()async{
           _showDialog();
@@ -253,7 +255,7 @@ class _HomeScreen2State extends State<HomeScreen2>{
             ),
             const Text("Uplode the Item information",style: TextStyle(
               fontStyle: FontStyle.italic,
-              fontSize: 30.0,
+              fontSize: 20.0,
               color:Colors.green,
             )),
             const SizedBox(
@@ -293,7 +295,7 @@ class _HomeScreen2State extends State<HomeScreen2>{
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.green),
                       padding: MaterialStateProperty.all(const EdgeInsets.all(13)),
-                    ),child: const Icon(Icons.close)),
+                    ),child: const Icon(Icons.close,color: Colors.white,)),
                 GestureDetector(
                   onTap: (){
                     if(titleController.text.length<1){
@@ -335,7 +337,7 @@ class _HomeScreen2State extends State<HomeScreen2>{
                     style: ButtonStyle(
                       backgroundColor: MaterialStateProperty.all(Colors.green),
                       padding: MaterialStateProperty.all(const EdgeInsets.all(13)),
-                    ),child: const Icon(Icons.image)),
+                    ),child: const Icon(Icons.image,color: Colors.white)),
               ],
             ),
             const Divider(
