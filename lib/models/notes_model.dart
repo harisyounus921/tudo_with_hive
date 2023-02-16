@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:hive/hive.dart';
 part 'notes_model.g.dart';
 
@@ -8,11 +9,23 @@ class NotesModel extends HiveObject {
   String title ;
 
   @HiveField(1)
-  String description ;
+  String description;
 
   @HiveField(2)
   String image ;
 
-  NotesModel({required this.title , required this.description , required this.image}) ;
+  @HiveField(3)
+  bool status ;
+
+  @HiveField(4)
+  String date;
+
+
+  @HiveField(5)
+  String time;
+
+
+  NotesModel({required this.title , required this.description , required this.image,
+required this.status,required this.date, required this.time}) ;
 
 }

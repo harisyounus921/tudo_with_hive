@@ -9,8 +9,11 @@ void main() async{
   var directory = await getApplicationDocumentsDirectory() ;
   Hive.init(directory.path);
 
-  Hive.registerAdapter(NotesModelAdapter()) ;
-  await Hive.openBox<NotesModel>('notes');
+  Hive.registerAdapter(NotesModelAdapter());
+  await Hive.openBox<NotesModel>('home');
+  await Hive.openBox<NotesModel>('work');
+  await Hive.openBox<NotesModel>('health');
+  await Hive.openBox<NotesModel>('private');
   runApp(const MyApp());
 }
 
